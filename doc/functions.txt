@@ -1,0 +1,31 @@
+functions
+- manager session
+- manager access_token
+- Single sign on service
+- manager user (username, password)
+- login history
+- verify password
+- app category
+- service category
+
+- indentity service (appId)
+- indentify catalog
+- indentity function (feature/function/subFunction)
+- indentity method
+- indetity attribute (field of table)
+
+
++ user roles
+- global admin = 3Smart admin
+    - admin - owner application admin
+        - employee - 
+    - guest
+    - customer
+
+- filter data follow application/feature/functions/attribute
+
+
+- user flow
+
+- select service (3smart Retail) => register => storeOwner (account, serviceId, all role admin functions)
+    - create employee -> invite user => can login (account, serviceId, role employee)
