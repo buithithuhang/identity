@@ -9,6 +9,9 @@ import { BaseSystemEntity } from '../../entities/base-system-entity';
 @Entity({ name: 'prd_application' })
 export class Application extends BaseSystemEntity {
 
+    @Column({name: 'hostname', type: 'varchar'})
+    HostName: string;
+
     @OneToMany(() => Functions, functions=> functions.Application)
     Functionses: Functions[];
 

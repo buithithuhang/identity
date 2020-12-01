@@ -14,6 +14,8 @@ export const MSG_OBJ_ALREADY_EXIST = (obj) => `${obj} already exist`;
 // Fields
 export const MSG_FIELD_REQUIRED = (f) => `Field ${f} is required`;
 
+export const MSG_FIELD_INVALID = (f) => `Field ${f} is invalid`;
+
 export const MSG_FIELD_MUST_ARRAY = (f) => `Field ${f} is must array`;
 
 export const MSG_FIELD_MUST_NUMBER = (f) => `Field ${f} is must number`;
