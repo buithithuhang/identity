@@ -33,7 +33,6 @@ export class FunctionsService {
             const rows = await this.functionsRepository.findAndCount({
                 where: {
                     DeleteFlag: DeleteFlag.None,
-                    SiteId: req.body.site_id,
                     andWhere: [{
                         Name: Like(`%${paging.filter || ''}%`),
                     }, {
@@ -59,7 +58,7 @@ export class FunctionsService {
 
     async get(req: Request, id: string) {
         try {
-            const functions = await this.functionsRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            const functions = await this.functionsRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!functions) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Functions.name));
             }
@@ -82,7 +81,7 @@ export class FunctionsService {
         // check application_id
         let application: Application;
         try {
-            application = await this.applicationRepository.findOne({ Id: body.application_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            application = await this.applicationRepository.findOne({ Id: body.application_id, DeleteFlag: DeleteFlag.None });
             if (!application) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Application.name));
             }
@@ -118,7 +117,7 @@ export class FunctionsService {
         // tslint:disable-next-line:prefer-const
         let functions;
         try {
-            functions = await this.functionsRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            functions = await this.functionsRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!functions) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Functions.name));
             }
@@ -132,7 +131,7 @@ export class FunctionsService {
         if (body.application_id && functions.application_id !== body.application_id) {
             let application: Application;
             try {
-                application = await this.applicationRepository.findOne({ Id: body.application_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+                application = await this.applicationRepository.findOne({ Id: body.application_id, DeleteFlag: DeleteFlag.None });
                 if (!application) {
                     return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Application.name));
                 }
@@ -165,7 +164,7 @@ export class FunctionsService {
         // Get functions by id from db
         let functions;
         try {
-            functions = await this.functionsRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            functions = await this.functionsRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!functions) {
                 return Problem.NotFound(functions.MSG_OBJ_NOT_FOUND(Functions.name));
             }

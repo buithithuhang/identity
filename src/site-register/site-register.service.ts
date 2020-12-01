@@ -19,7 +19,7 @@ export class SiteRegisterService {
     constructor(
         @InjectRepository(SiteRegister)
         private siteRegisterRepository: Repository<SiteRegister>,
-        
+
         @InjectRepository(Site)
         private siteRepository: Repository<Site>,
     ) {
@@ -33,7 +33,6 @@ export class SiteRegisterService {
             const rows = await this.siteRegisterRepository.findAndCount({
                 where: {
                     DeleteFlag: DeleteFlag.None,
-                    SiteId: req.body.site_id,
                     andWhere: [{
                         Name: Like(`%${paging.filter || ''}%`),
                     }, {
@@ -59,7 +58,7 @@ export class SiteRegisterService {
 
     async get(req: Request, id: string) {
         try {
-            const siteRegister = await this.siteRegisterRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            const siteRegister = await this.siteRegisterRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!siteRegister) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(SiteRegister.name));
             }
@@ -82,7 +81,7 @@ export class SiteRegisterService {
         // check site id
         let site: Site;
         try {
-            site = await this.siteRepository.findOne({ Id: body.site_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            site = await this.siteRepository.findOne({ Id: body.site_id, DeleteFlag: DeleteFlag.None });
             if (!site) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Site.name));
             }
@@ -120,7 +119,7 @@ export class SiteRegisterService {
         // tslint:disable-next-line:prefer-const
         let siteRegister;
         try {
-            siteRegister = await this.siteRegisterRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            siteRegister = await this.siteRegisterRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!siteRegister) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(SiteRegister.name));
             }
@@ -134,7 +133,7 @@ export class SiteRegisterService {
             // check site id
             let site: Site;
             try {
-                site = await this.siteRepository.findOne({ Id: body.site_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+                site = await this.siteRepository.findOne({ Id: body.site_id, DeleteFlag: DeleteFlag.None });
                 if (!site) {
                     return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Site.name));
                 }
@@ -169,7 +168,7 @@ export class SiteRegisterService {
         // Get siteRegister by id from db
         let siteRegister;
         try {
-            siteRegister = await this.siteRegisterRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            siteRegister = await this.siteRegisterRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!siteRegister) {
                 return Problem.NotFound(siteRegister.MSG_OBJ_NOT_FOUND(SiteRegister.name));
             }

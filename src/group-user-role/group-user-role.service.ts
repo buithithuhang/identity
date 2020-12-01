@@ -33,7 +33,6 @@ export class GroupUserRoleService {
             const rows = await this.groupUserRoleRepository.findAndCount({
                 where: {
                     DeleteFlag: DeleteFlag.None,
-                    SiteId: req.body.site_id,
                     andWhere: [{
                         Name: Like(`%${paging.filter || ''}%`),
                     }, {
@@ -59,7 +58,7 @@ export class GroupUserRoleService {
 
     async get(req: Request, id: string) {
         try {
-            const groupUserRole = await this.groupUserRoleRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            const groupUserRole = await this.groupUserRoleRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!groupUserRole) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(GroupUserRole.name));
             }
@@ -82,7 +81,7 @@ export class GroupUserRoleService {
         // check group_user_id
         let groupUser: GroupUser;
         try {
-            groupUser = await this.groupUserRepository.findOne({ Id: body.group_user_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            groupUser = await this.groupUserRepository.findOne({ Id: body.group_user_id, DeleteFlag: DeleteFlag.None });
             if (!groupUser) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(GroupUser.name));
             }
@@ -118,7 +117,7 @@ export class GroupUserRoleService {
         // tslint:disable-next-line:prefer-const
         let groupUserRole;
         try {
-            groupUserRole = await this.groupUserRoleRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            groupUserRole = await this.groupUserRoleRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!groupUserRole) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(GroupUserRole.name));
             }
@@ -131,7 +130,7 @@ export class GroupUserRoleService {
         if (body.group_user_id && groupUserRole.group_user_id !== body.group_user_id) {
             let groupUser: GroupUser;
             try {
-                groupUser = await this.groupUserRepository.findOne({ Id: body.group_user_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+                groupUser = await this.groupUserRepository.findOne({ Id: body.group_user_id, DeleteFlag: DeleteFlag.None });
                 if (!groupUser) {
                     return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(GroupUser.name));
                 }
@@ -164,7 +163,7 @@ export class GroupUserRoleService {
         // Get groupUserRole by id from db
         let groupUserRole;
         try {
-            groupUserRole = await this.groupUserRoleRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            groupUserRole = await this.groupUserRoleRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!groupUserRole) {
                 return Problem.NotFound(groupUserRole.MSG_OBJ_NOT_FOUND(GroupUserRole.name));
             }

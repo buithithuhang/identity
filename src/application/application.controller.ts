@@ -11,7 +11,6 @@ import { AuthorizationMiddleware } from 'src/middleware/auth.middleware';
 @ApiTags('Application')
 @Controller('application')
 // Note:: Need to add all controller to check permission
-@ApiHeader({ name: 'site_id', required: true })
 @ApiBearerAuth()
 @UseInterceptors(AuthorizationMiddleware)
 export class ApplicationController {

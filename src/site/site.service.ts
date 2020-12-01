@@ -37,7 +37,6 @@ export class SiteService {
             const rows = await this.siteRepository.findAndCount({
                 where: {
                     DeleteFlag: DeleteFlag.None,
-                    SiteId: req.body.site_id,
                     andWhere: [{
                         Name: Like(`%${paging.filter || ''}%`),
                     }, {
@@ -63,7 +62,7 @@ export class SiteService {
 
     async get(req: Request, id: string) {
         try {
-            const site = await this.siteRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            const site = await this.siteRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!site) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Site.name));
             }
@@ -86,7 +85,7 @@ export class SiteService {
         // check application_id
         let application: Application;
         try {
-            application = await this.applicationRepository.findOne({ Id: body.application_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            application = await this.applicationRepository.findOne({ Id: body.application_id, DeleteFlag: DeleteFlag.None });
             if (!application) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Application.name));
             }
@@ -98,7 +97,7 @@ export class SiteService {
         // check company_id
         let company: Company;
         try {
-            company = await this.companyRepository.findOne({ Id: body.company_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            company = await this.companyRepository.findOne({ Id: body.company_id, DeleteFlag: DeleteFlag.None });
             if (!company) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Company.name));
             }
@@ -135,7 +134,7 @@ export class SiteService {
         // tslint:disable-next-line:prefer-const
         let site;
         try {
-            site = await this.siteRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            site = await this.siteRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!site) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Site.name));
             }
@@ -149,7 +148,7 @@ export class SiteService {
         if (body.application_id && site.application_id !== body.application_id) {
             let application: Application;
             try {
-                application = await this.applicationRepository.findOne({ Id: body.application_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+                application = await this.applicationRepository.findOne({ Id: body.application_id, DeleteFlag: DeleteFlag.None });
                 if (!application) {
                     return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Application.name));
                 }
@@ -164,7 +163,7 @@ export class SiteService {
         if (body.company_id && site.company_id !== body.company_id) {
             let company: Company;
             try {
-                company = await this.companyRepository.findOne({ Id: body.company_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+                company = await this.companyRepository.findOne({ Id: body.company_id, DeleteFlag: DeleteFlag.None });
                 if (!company) {
                     return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Company.name));
                 }
@@ -174,7 +173,7 @@ export class SiteService {
             }
         }
 
-        
+
         // Update value
         try {
             site.Name = body.name || site.Name;
@@ -200,7 +199,7 @@ export class SiteService {
         // Get site by id from db
         let site;
         try {
-            site = await this.siteRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            site = await this.siteRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!site) {
                 return Problem.NotFound(site.MSG_OBJ_NOT_FOUND(Site.name));
             }

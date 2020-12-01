@@ -29,7 +29,6 @@ export class ApplicationService {
             const rows = await this.applicationRepository.findAndCount({
                 where: {
                     DeleteFlag: DeleteFlag.None,
-                    SiteId: req.body.site_id,
                     andWhere: [{
                         Name: Like(`%${paging.filter || ''}%`),
                     }, {
@@ -55,7 +54,7 @@ export class ApplicationService {
 
     async get(req: Request, id: string) {
         try {
-            const application = await this.applicationRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            const application = await this.applicationRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!application) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Application.name));
             }
@@ -100,7 +99,7 @@ export class ApplicationService {
         // tslint:disable-next-line:prefer-const
         let application;
         try {
-            application = await this.applicationRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            application = await this.applicationRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!application) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Application.name));
             }
@@ -130,7 +129,7 @@ export class ApplicationService {
         // Get application by id from db
         let application;
         try {
-            application = await this.applicationRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            application = await this.applicationRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!application) {
                 return Problem.NotFound(application.MSG_OBJ_NOT_FOUND(Application.name));
             }

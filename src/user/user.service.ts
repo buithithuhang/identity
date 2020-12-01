@@ -37,7 +37,6 @@ export class UserService {
             const rows = await this.userRepository.findAndCount({
                 where: {
                     DeleteFlag: DeleteFlag.None,
-                    SiteId: req.body.site_id,
                     andWhere: [{
                         Name: Like(`%${paging.filter || ''}%`),
                     }, {
@@ -63,7 +62,7 @@ export class UserService {
 
     async get(req: Request, id: string) {
         try {
-            const user = await this.userRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            const user = await this.userRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!user) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(User.name));
             }
@@ -86,7 +85,7 @@ export class UserService {
         // check company_id
         let company: Company;
         try {
-            company = await this.companyRepository.findOne({ Id: body.company_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            company = await this.companyRepository.findOne({ Id: body.company_id, DeleteFlag: DeleteFlag.None });
             if (!company) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Company.name));
             }
@@ -98,7 +97,7 @@ export class UserService {
         // check group_user_id
         let groupUser: GroupUser;
         try {
-            groupUser = await this.groupUserRepository.findOne({ Id: body.group_user_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            groupUser = await this.groupUserRepository.findOne({ Id: body.group_user_id, DeleteFlag: DeleteFlag.None });
             if (!groupUser) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(GroupUser.name));
             }
@@ -143,7 +142,7 @@ export class UserService {
         // tslint:disable-next-line:prefer-const
         let user;
         try {
-            user = await this.userRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            user = await this.userRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!user) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(User.name));
             }
@@ -157,7 +156,7 @@ export class UserService {
         if (body.company_id && user.company_id !== body.company_id) {
             let company: Company;
             try {
-                company = await this.companyRepository.findOne({ Id: body.company_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+                company = await this.companyRepository.findOne({ Id: body.company_id, DeleteFlag: DeleteFlag.None });
                 if (!company) {
                     return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Company.name));
                 }
@@ -173,7 +172,7 @@ export class UserService {
             // check groupUser id
             let groupUser: GroupUser;
             try {
-                groupUser = await this.groupUserRepository.findOne({ Id: body.group_user_id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+                groupUser = await this.groupUserRepository.findOne({ Id: body.group_user_id, DeleteFlag: DeleteFlag.None });
                 if (!groupUser) {
                     return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(GroupUser.name));
                 }
@@ -215,7 +214,7 @@ export class UserService {
         // Get user by id from db
         let user;
         try {
-            user = await this.userRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            user = await this.userRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!user) {
                 return Problem.NotFound(user.MSG_OBJ_NOT_FOUND(User.name));
             }

@@ -29,7 +29,6 @@ export class CompanyService {
             const rows = await this.companyRepository.findAndCount({
                 where: {
                     DeleteFlag: DeleteFlag.None,
-                    SiteId: req.body.site_id,
                     andWhere: [{
                         Name: Like(`%${paging.filter || ''}%`),
                     }, {
@@ -55,7 +54,7 @@ export class CompanyService {
 
     async get(req: Request, id: string) {
         try {
-            const company = await this.companyRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            const company = await this.companyRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!company) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Company.name));
             }
@@ -104,7 +103,7 @@ export class CompanyService {
         // tslint:disable-next-line:prefer-const
         let company;
         try {
-            company = await this.companyRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            company = await this.companyRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!company) {
                 return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Company.name));
             }
@@ -116,10 +115,10 @@ export class CompanyService {
         try {
             company.Name = body.name || company.Name;
             company.Description = body.description || company.Description;
-            company.Email = body.email|| company.Email;
-            company.Owner = body.owner|| company.Owner;
-            company.Phone = body.phone|| company.Phone;
-            company.Adress = body.adress|| company.Adress;
+            company.Email = body.email || company.Email;
+            company.Owner = body.owner || company.Owner;
+            company.Phone = body.phone || company.Phone;
+            company.Adress = body.adress || company.Adress;
             company.setBaseDataInfo(req);
 
             await this.companyRepository.save(company);
@@ -138,7 +137,7 @@ export class CompanyService {
         // Get company by id from db
         let company;
         try {
-            company = await this.companyRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
+            company = await this.companyRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
             if (!company) {
                 return Problem.NotFound(company.MSG_OBJ_NOT_FOUND(Company.name));
             }
