@@ -16,12 +16,16 @@ export class ReqFunctions {
     api_url: string;
 
     @ApiProperty()
+    parent_id: string;
+
+    @ApiProperty()
     application_id: string;
 
     constructor(json?: Functions) {
         this.name = json?.Name || '';
         this.description = json?.Description || '';
         this.api_url = json?.ApiUrl || '';
+        this.parent_id = json?.ParentId || '';
         this.application_id = json?.ApplicationId || '';
     }
     public static runValidator(functions: ReqFunctions) {
@@ -33,7 +37,7 @@ export class ReqFunctions {
             messages.push({ field: BaseFields.Name, message: Consts.MSG_FIELD_REQUIRED(BaseFields.Name) });
         }
 
-        if (!functions.application_id) {
+        if (!functions.application_id ) {
             messages.push({ field: "application_id", message: Consts.MSG_FIELD_REQUIRED("application_id") });
         }
         return messages;

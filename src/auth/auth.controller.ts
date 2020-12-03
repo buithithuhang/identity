@@ -5,6 +5,7 @@ import { Company } from "src/company/entities/company.entity";
 import { AuthService } from "./auth.service";
 import { ReqRegister } from "./models/req-register.model";
 import { ResRegister } from "./models/res-register.model";
+import {Request} from 'express';
 
 @ApiTags('Auth')
 @Controller('auth')

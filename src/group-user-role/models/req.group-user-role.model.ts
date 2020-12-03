@@ -22,7 +22,7 @@ export class ReqGroupUserRole {
         this.name = json?.Name || '';
         this.description = json?.Description || '';
         this.roles = json?.Roles || '';
-        this.group_user_id = json?.GroupUserID || '';
+        this.group_user_id = json?.GroupUserId || '';
     }
     public static runValidator(groupUserRole: ReqGroupUserRole) {
         const messages = [];

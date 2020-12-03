@@ -32,7 +32,7 @@ export class GroupUserRoleService {
 
             const rows = await this.groupUserRoleRepository.findAndCount({
                 where: {
-                    DeleteFlag: DeleteFlag.None,
+                    DeleteFlag: DeleteFlag.None, 
                     andWhere: [{
                         Name: Like(`%${paging.filter || ''}%`),
                     }, {
@@ -68,6 +68,19 @@ export class GroupUserRoleService {
             return Problem.InternalServerError();
         }
 
+    }
+
+    async getByGroupUserId(req: Request, group_user_id: string) {
+        try {
+            const groupUserRole = await this.groupUserRoleRepository.findOne({ GroupUserId: group_user_id, DeleteFlag: DeleteFlag.None });
+            if (!groupUserRole) {
+                return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(GroupUserRole.name));
+            }
+            return Mapper.map(ResGroupUserRole, groupUserRole);
+        } catch (error) {
+            Logger.error(GetAction.GetFromDB, error);
+            return Problem.InternalServerError();
+        }
     }
 
     async create(req: Request, body: ReqGroupUserRole): Promise<GroupUserRole | Problem> {

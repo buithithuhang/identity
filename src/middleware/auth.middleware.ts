@@ -9,9 +9,9 @@ import { Request } from 'express';
 export class AuthorizationMiddleware implements NestMiddleware {
     async use(req: Request, res: any, next: () => void) {
 
-        if (!req.headers.authorization || !req.headers.site_id) {
-            throw Problem.HttpException(Problem.UnAuthorized(Consts.MSG_AUTH_FAILED));
-        }
+        // if (!req.headers.authorization || !req.headers.site_id) {
+        //     throw Problem.HttpException(Problem.UnAuthorized(Consts.MSG_AUTH_FAILED));
+        // }
         req.body.site_id = req.headers.site_id;
         // const headers = { headers: { authorization: req.headers.authorization } };
         // const response: any = await Requester.post(`${process.env.AUTH_API}/site/verify`, { site_id: req.headers.site_id }, headers);

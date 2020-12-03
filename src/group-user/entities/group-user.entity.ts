@@ -1,4 +1,3 @@
-
 import { GroupUserRole } from 'src/group-user-role/entities/group-user-role.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Entity, Column, JoinTable, ManyToMany, TreeChildren, TreeParent, ManyToOne, JoinColumn, OneToMany } from 'typeorm';

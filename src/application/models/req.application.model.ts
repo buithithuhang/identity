@@ -12,9 +12,13 @@ export class ReqApplication {
     @ApiProperty()
     description: string;
 
+    @ApiProperty()
+    hostname: string;
+
     constructor(json?: Application) {
         this.name = json?.Name || '';
         this.description = json?.Description || '';
+        this.description = json?.HostName || '';
     }
     public static runValidator(application: ReqApplication) {
         const messages = [];

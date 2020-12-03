@@ -12,7 +12,7 @@ export class GroupUserRole extends BaseSystemEntity {
     public Roles: string;
 
     @Column({ name: 'group_user_id', type: 'char', length: 64, nullable: true })
-    GroupUserID: string;
+    GroupUserId: string;
 
     @ManyToOne(() => GroupUser, groupUser => groupUser.GroupUserRoles)
     @JoinColumn({ name: 'group_user_id' })

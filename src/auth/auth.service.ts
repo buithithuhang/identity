@@ -130,7 +130,7 @@ export class AuthService {
         } catch (ex) {
             return Problem.InternalServerError();
         }
-        // mapping data to email template
+        // mapping data to email_template
 
 
         // send email

@@ -1,4 +1,5 @@
 import { Mapper } from 'src/common';
+import { ResFunctions } from 'src/functions/models/res.functions.model';
 import { ResGroupUserRole } from 'src/group-user-role/models/res.group-user-role.model';
 import { ResUser } from 'src/user/models/res.user.model';
 import { GroupUser } from '../entities/group-user.entity';

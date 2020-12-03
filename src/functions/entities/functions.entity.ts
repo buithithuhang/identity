@@ -18,7 +18,11 @@ export class Functions extends BaseSystemEntity {
     @JoinColumn({ name: 'application_id' })
     Application: Application;
 
-    @TreeParent()
+    @Column({ name: 'parent_id', type: 'varchar', length: 64, nullable: true })
+    ParentId: string;
+
+    @TreeParent() 
+    @JoinColumn({ name: 'parent_id' })
     Parent: Functions;
 
     @TreeChildren()

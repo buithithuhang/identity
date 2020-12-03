@@ -22,9 +22,6 @@ export class ReqRegister {
     @ApiProperty()
     public password: string
 
-    @ApiProperty()
-    public site_id: string
-
     public runValidate(data: ReqRegister) {
         const messages = [];
         // valid fields 

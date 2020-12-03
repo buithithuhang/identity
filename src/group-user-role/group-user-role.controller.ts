@@ -33,6 +33,14 @@ export class GroupUserRoleController {
       : result;
   }
 
+  @Get('byGroupUserId/:id')
+  async getByGroupUserId(@Req() req: Request, @Param('id') id: string) {
+    const result = await this.groupUserRoleService.getByGroupUserId(req, id);
+    return (result instanceof Problem)
+      ? Problem.HttpException(result)
+      : result;
+  }
+
   @Post()
   async create(@Req() req: Request, @Body() body: ReqGroupUserRole): Promise<GroupUserRole | Problem> {
     const result = this.groupUserRoleService.create(req, body);

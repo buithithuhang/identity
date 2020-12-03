@@ -11,7 +11,7 @@ import { AuthorizationMiddleware } from 'src/middleware/auth.middleware';
 @ApiTags('Functions')
 @Controller('functions')
 // Note:: Need to add all controller to check permission
-@ApiHeader({ name: 'site_id', required: true })
+//@ApiHeader({ name: 'site_id', required: true })
 @ApiBearerAuth()
 @UseInterceptors(AuthorizationMiddleware)
 export class FunctionsController {
@@ -28,6 +28,14 @@ export class FunctionsController {
   @Get(':id')
   async get(@Req() req: Request, @Param('id') id: string) {
     const result = await this.functionsService.get(req, id);
+    return (result instanceof Problem)
+      ? Problem.HttpException(result)
+      : result;
+  }
+
+  @Get('byApplicationId/:id')
+  async getByApplicationId(@Req() req: Request, @Param('id') id: string) {
+    const result = await this.functionsService.getByApplicationId(req, id);
     return (result instanceof Problem)
       ? Problem.HttpException(result)
       : result;

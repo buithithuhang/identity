@@ -29,16 +29,18 @@ export class FunctionsService {
     // Get all data
     async findAll(req: Request, paging?: Pagination) {
         try {
-
+            // app_id <= req.body.app+id
+            // group_user_id 
             const rows = await this.functionsRepository.findAndCount({
                 where: {
                     DeleteFlag: DeleteFlag.None,
+                     ApplicationId: req.body.application_id,
                     andWhere: [{
                         Name: Like(`%${paging.filter || ''}%`),
                     }, {
                         Description: Like(`%${paging.filter || ''}%`),
                     }],
-                },
+                }, 
                 order: {
                     Name: 'ASC',
                 },
@@ -70,6 +72,22 @@ export class FunctionsService {
 
     }
 
+    async getByApplicationId(req: Request, application_id: string) {
+        try {
+            const functions = await this.functionsRepository.find(
+                {relations: ['Children'],
+                where: { ParentId: null, ApplicationId: application_id, DeleteFlag: DeleteFlag.None }
+            });
+            if (!functions) {
+                return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(Functions.name));
+            }
+            return Mapper.map(ResFunctions, functions);
+        } catch (error) {
+            Logger.error(GetAction.GetFromDB, error);
+            return Problem.InternalServerError();
+        }
+
+    }
     async create(req: Request, body: ReqFunctions): Promise<Functions | Problem> {
         // [1] validate data
         const validMessages = ReqFunctions.runValidator(body);
@@ -90,12 +108,15 @@ export class FunctionsService {
             return Problem.InternalServerError();
         }
 
+
         try {
             const functions = new Functions();
             functions.Name = body.name;
             functions.Description = body.description;
             functions.ApiUrl = body.api_url;
             functions.Application = application;
+            //TODO: check parnt is exist////
+            functions.ParentId = body.parent_id;
             functions.setBaseDataInfo(req);
 
             await this.functionsRepository.save(functions);
@@ -140,6 +161,7 @@ export class FunctionsService {
                 return Problem.InternalServerError();
             }
         }
+
         // Update value
         try {
             functions.Name = body.name || functions.Name;
