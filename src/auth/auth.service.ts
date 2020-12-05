@@ -13,6 +13,7 @@ import { Site } from "src/site/entities/site.entity";
 import { Application } from "src/application/entities/application.entity";
 import { EmailTemplate } from "src/email-template/entities/email-template.entity";
 import { GroupUserTemplate } from "src/group-user-template/entities/group-user-template.entity";
+import { RequestTarget as request } from "src/common";
 
 @Injectable()
 export class AuthService {
@@ -144,8 +145,9 @@ export class AuthService {
         // Tạo khách sạn
         // tạo floors
         // tạo status...
-        
-
+        let init = await request.post(req, { url: `${process.env.HKM_API}/init` });
+        console.log(init);
+        console.log("init hkm module successfully")
         // Chọn mẫu email và điền dữ liệu vào mẫu  
         // -> get email template
         let emailTemplate;

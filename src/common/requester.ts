@@ -25,6 +25,23 @@ export class Requester {
     }
 
     /**
+     * method put
+     * @param url string
+     * @param data any
+     * @param config? any
+     */
+    public static async put<T>(url: string, data: any, config?: any): Promise<T | object> {
+        try {
+            return await axios.put<T>(`${url}`, data, config);
+        } catch (e) {
+            return {
+                status: e.response?.status,
+                title: e.response?.statusText,
+                detail: e,
+            };
+        }
+    }
+    /**
      * get
      * @param url string
      */
@@ -32,6 +49,21 @@ export class Requester {
         try {
             // method get
             return await axios.get<T>(`${url}`, config);
+        } catch (e) {
+            return {
+                status: e.response?.status,
+                detail: e,
+            };
+        }
+    }
+    /**
+     * delete
+     * @param url string
+     */
+    public static async delete<T>(url: string, config: any): Promise<T | object> {
+        try {
+            // method get
+            return await axios.delete<T>(`${url}`, config);
         } catch (e) {
             return {
                 status: e.response?.status,

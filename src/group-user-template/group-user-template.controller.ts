@@ -8,7 +8,7 @@ import { ApiTags, ApiBearerAuth, ApiHeader } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuthorizationMiddleware } from 'src/middleware/auth.middleware';
 
-@ApiTags('Group User Template')
+@ApiTags('GroupUserTemplate')
 @Controller('groupusertemplate')
 @ApiBearerAuth()
 @UseInterceptors(AuthorizationMiddleware)

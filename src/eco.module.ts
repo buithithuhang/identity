@@ -10,6 +10,7 @@ import { UserModule } from './user/user.module';
 import { GroupUserModule } from './group-user/group-user.module';
 import { GroupUserTemplateModule } from './group-user-template/group-user-template.module';
 import { FunctionsModule } from './functions/functions.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -22,7 +23,8 @@ import { FunctionsModule } from './functions/functions.module';
     SiteRegisterModule,
     UserModule,
     GroupUserModule,
-    GroupUserTemplateModule
+    GroupUserTemplateModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
