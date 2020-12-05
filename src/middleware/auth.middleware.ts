@@ -13,6 +13,11 @@ export class AuthorizationMiddleware implements NestMiddleware {
         //     throw Problem.HttpException(Problem.UnAuthorized(Consts.MSG_AUTH_FAILED));
         // }
         req.body.site_id = req.headers.site_id;
+        req.body.user = { role: 'superadmin' };
+
+        // TODO if user role != superadmin => check req.headers.site_id
+
+
         // const headers = { headers: { authorization: req.headers.authorization } };
         // const response: any = await Requester.post(`${process.env.AUTH_API}/site/verify`, { site_id: req.headers.site_id }, headers);
         // if (![HttpStatus.OK, HttpStatus.CREATED, HttpStatus.ACCEPTED].includes(response.status)) {

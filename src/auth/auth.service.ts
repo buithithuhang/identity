@@ -12,6 +12,7 @@ import { Request } from 'express';
 import { Site } from "src/site/entities/site.entity";
 import { Application } from "src/application/entities/application.entity";
 import { EmailTemplate } from "src/email-template/entities/email-template.entity";
+import { GroupUserTemplate } from "src/group-user-template/entities/group-user-template.entity";
 
 @Injectable()
 export class AuthService {
@@ -30,6 +31,9 @@ export class AuthService {
 
         @InjectRepository(EmailTemplate)
         private emailTemplateRepository: Repository<EmailTemplate>,
+
+        @InjectRepository(GroupUserTemplate)
+        private groupUserTemplateRepository: Repository<GroupUserTemplate>,
 
 
     ) {
@@ -56,12 +60,12 @@ export class AuthService {
             return Problem.InternalServerError();
         }
 
-        // Nếu cả 3 giá trị trên không bị trùng khớp, tạo mới tài khoản cho người dùng
+        // Nếu cả 3 giá trị trên không bị trùng khớp, tạo mới tài khoản cho người dùng\
+        let user;
         try {
-
-            let user: User = new User();
+            user = new User();
             user.UserName = body.username;
-            //...
+            //... nho bo sung cac field dang ky giup anh email, phone...
             user = await this.userRepository.save(user);
 
         } catch (ex) {
@@ -97,12 +101,50 @@ export class AuthService {
             site.Company = company;
             //...
             site = await this.userRepository.save(site);
-
+            req.body.site_id = site.Id;
         } catch (ex) {
             return Problem.InternalServerError();
         }
-        // Tạo khách sạn
 
+        // tạo group user from group user template
+
+        let groupUserTemplate: GroupUserTemplate[];
+        try {
+            groupUserTemplate = await this.groupUserTemplateRepository.find();
+        } catch (ex) {
+            return Problem.InternalServerError();
+        }
+
+        let userGroup: GroupUser[];
+        try {
+            let arrUserGroups = [];
+            for (let i = 0; i < groupUserTemplate.length; i++) {
+                let gr = groupUserTemplate[i];
+                let group = new GroupUser();
+                group.Name = gr.Name;
+                group.Description = gr.Description;
+                group.Roles = gr.Roles;
+                group.IsDefault = gr.IsDefault;
+                group.setBaseDataInfo(req);
+                arrUserGroups.push(group);
+            }
+            userGroup = await this.groupUserRepository.save(arrUserGroups);
+        } catch (error) {
+
+        }
+        // update user group default
+        try {
+            let groupUserDefault = userGroup.find(g => g.IsDefault === true)
+            user.GroupUser = groupUserDefault;
+            await this.userRepository.save(user);
+        } catch (error) {
+            return Problem.InternalServerError();
+        }
+
+        // Tạo khách sạn
+        // tạo floors
+        // tạo status...
+        
 
         // Chọn mẫu email và điền dữ liệu vào mẫu  
         // -> get email template

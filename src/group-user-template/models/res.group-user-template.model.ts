@@ -1,14 +1,13 @@
-import { Mapper } from 'src/common';
 import { ResUser } from 'src/user/models/res.user.model';
-import { GroupUser } from '../entities/group-user.entity';
+import { GroupUserTemplate } from '../entities/group-user-template.entity';
 
-export class ResGroupUser {
+export class ResGroupUserTemplate {
     id: string;
     name: string;
     description: string;
-    roles:string;
+   roles: string;
 
-    constructor(json?: GroupUser) {
+    constructor(json?: GroupUserTemplate) {
         this.id = json?.Id;
         this.name = json?.Name;
         this.description = json?.Description;

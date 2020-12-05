@@ -11,10 +11,14 @@ export class ReqGroupUser {
 
     @ApiProperty()
     description: string;
+ 
+    @ApiProperty()
+    roles: string;
 
     constructor(json?: GroupUser) {
         this.name = json?.Name || '';
         this.description = json?.Description || '';
+        this.roles = json?.Roles || '';
     }
     public static runValidator(groupUser: ReqGroupUser) {
         const messages = [];

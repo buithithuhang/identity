@@ -1,23 +1,22 @@
 import { Injectable, Logger, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GroupUser } from './entities/group-user.entity';
+import { GroupUserTemplate } from './entities/group-user-template.entity';
 import { Repository, Like } from 'typeorm';
 import { DeleteFlag } from 'src/common/enums';
 import { Pagination } from 'src/base-model/paging.model';
-import { ResGroupUser } from './models/res.group-user.model';
+import { ResGroupUserTemplate } from './models/res.group-user-template.model';
 import { IPagination } from 'src/base-model/pagination-result';
 import { Mapper } from 'src/common/mapper';
 import { GetAllAction, Problem, GetAction, UpdateAction, CreateAction, DeleteAction } from 'src/common';
-import { ReqGroupUser } from './models/req.group-user.model';
-import { isNullOrUndefined } from 'util';
+import { ReqGroupUserTemplate } from './models/req.group-user-template.model';
 import * as Consts from '../common/consts';
 import { BaseFields } from 'src/entities/base-system-fields';
 import { Request } from 'express';
 @Injectable()
-export class GroupUserService {
+export class GroupUserTemplateService {
     constructor(
-        @InjectRepository(GroupUser)
-        private groupUserRepository: Repository<GroupUser>,
+        @InjectRepository(GroupUserTemplate)
+        private groupUserTemplateRepository: Repository<GroupUserTemplate>,
     ) {
 
     }
@@ -26,10 +25,11 @@ export class GroupUserService {
     async findAll(req: Request, paging?: Pagination) {
         try {
             // if supperadmin get => get groupuer template
-            const rows = await this.groupUserRepository.findAndCount({
+            var isTemplate = req.body.user?.role === 'superadmin';
+            console.log("isstemplate", isTemplate);
+            const rows = await this.groupUserTemplateRepository.findAndCount({
                 where: {
                     DeleteFlag: DeleteFlag.None,
-                    SiteId: req.body.site_id,
                     andWhere: [{
                         Name: Like(`%${paging.filter || ''}%`),
                     }, {
@@ -44,7 +44,7 @@ export class GroupUserService {
             });
 
             return {
-                data: Mapper.map(ResGroupUser, rows[0]),
+                data: Mapper.map(ResGroupUserTemplate, rows[0]),
                 paging: { page: paging.page, pageSize: paging.pageSize, count: rows[1] },
             } as IPagination;
         } catch (error) {
@@ -55,11 +55,11 @@ export class GroupUserService {
 
     async get(req: Request, id: string) {
         try {
-            const groupUser = await this.groupUserRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
-            if (!groupUser) {
-                return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(GroupUser.name));
+            const groupUserTemplate = await this.groupUserTemplateRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
+            if (!groupUserTemplate) {
+                return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(GroupUserTemplate.name));
             }
-            return Mapper.map(ResGroupUser, groupUser);
+            return Mapper.map(ResGroupUserTemplate, groupUserTemplate);
         } catch (error) {
             Logger.error(GetAction.GetFromDB, error);
             return Problem.InternalServerError();
@@ -67,44 +67,45 @@ export class GroupUserService {
 
     }
 
-    async create(req: Request, body: ReqGroupUser): Promise<GroupUser | Problem> {
+    async create(req: Request, body: ReqGroupUserTemplate): Promise<GroupUserTemplate | Problem> {
         // [1] validate data
-        const validMessages = ReqGroupUser.runValidator(body);
+        const validMessages = ReqGroupUserTemplate.runValidator(body);
         if (validMessages?.length > 0) {
             Logger.log(CreateAction.ValidateRequest);
             return Problem.BadRequest(validMessages);
         }
 
         try {
-            const groupUser = new GroupUser();
-            groupUser.Name = body.name;
-            groupUser.Description = body.description;
-            groupUser.Roles = body.roles;
+            const groupUserTemplate = new GroupUserTemplate();
+            groupUserTemplate.Name = body.name;
+            groupUserTemplate.Description = body.description;
+            groupUserTemplate.Roles = body.roles;
+            groupUserTemplate.IsDefault = body.is_default || false;
 
-            groupUser.setBaseDataInfo(req);
+            groupUserTemplate.setBaseDataInfo(req);
 
-            await this.groupUserRepository.save(groupUser);
-            return Mapper.map(ResGroupUser, groupUser);
+            await this.groupUserTemplateRepository.save(groupUserTemplate);
+            return Mapper.map(ResGroupUserTemplate, groupUserTemplate);
         } catch (error) {
             Logger.error(CreateAction.CheckFromDB, error);
             return Problem.InternalServerError();
         }
     }
 
-    async update(req: Request, id: string, body: ReqGroupUser): Promise<GroupUser | Problem> {
+    async update(req: Request, id: string, body: ReqGroupUserTemplate): Promise<GroupUserTemplate | Problem> {
         // [1] validate data
-        const validMessages = ReqGroupUser.runValidator(body);
+        const validMessages = ReqGroupUserTemplate.runValidator(body);
         if (validMessages?.length > 0) {
             Logger.log(UpdateAction.ValidateRequest);
             return Problem.BadRequest(validMessages);
         }
         // [2] Check exist on DB
         // tslint:disable-next-line:prefer-const
-        let groupUser;
+        let groupUserTemplate;
         try {
-            groupUser = await this.groupUserRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
-            if (!groupUser) {
-                return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(GroupUser.name));
+            groupUserTemplate = await this.groupUserTemplateRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
+            if (!groupUserTemplate) {
+                return Problem.NotFound(Consts.MSG_OBJ_NOT_FOUND(GroupUserTemplate.name));
             }
         } catch (error) {
             Logger.error(UpdateAction.CheckFromDB, error);
@@ -112,13 +113,13 @@ export class GroupUserService {
         }
         // Update value
         try {
-            groupUser.Name = body.name || groupUser.Name;
-            groupUser.Description = body.description || groupUser.Description;
-            groupUser.Roles = body.roles || groupUser.Roles;
-            groupUser.setBaseDataInfo(req);
+            groupUserTemplate.Name = body.name || groupUserTemplate.Name;
+            groupUserTemplate.Description = body.description || groupUserTemplate.Description;
+            groupUserTemplate.Roles = body.roles || groupUserTemplate.Roles;
+            groupUserTemplate.setBaseDataInfo(req);
 
-            await this.groupUserRepository.save(groupUser);
-            return Mapper.map(ResGroupUser, groupUser);
+            await this.groupUserTemplateRepository.save(groupUserTemplate);
+            return Mapper.map(ResGroupUserTemplate, groupUserTemplate);
         } catch (error) {
             Logger.log(UpdateAction.UpdateValue, error);
             return Problem.InternalServerError();
@@ -130,12 +131,12 @@ export class GroupUserService {
         if (!(id)) {
             return new Problem({ status: HttpStatus.BAD_REQUEST, message: Consts.MSG_FIELD_REQUIRED(BaseFields.Id) });
         }
-        // Get groupUser by id from db
-        let groupUser;
+        // Get groupUserTemplate by id from db
+        let groupUserTemplate;
         try {
-            groupUser = await this.groupUserRepository.findOne({ Id: id, SiteId: req.body.site_id, DeleteFlag: DeleteFlag.None });
-            if (!groupUser) {
-                return Problem.NotFound(groupUser.MSG_OBJ_NOT_FOUND(GroupUser.name));
+            groupUserTemplate = await this.groupUserTemplateRepository.findOne({ Id: id, DeleteFlag: DeleteFlag.None });
+            if (!groupUserTemplate) {
+                return Problem.NotFound(groupUserTemplate.MSG_OBJ_NOT_FOUND(GroupUserTemplate.name));
             }
         } catch (error) {
             Logger.log(DeleteAction.CheckFromDB, error);
@@ -144,9 +145,9 @@ export class GroupUserService {
 
         // change flag save to db
         try {
-            groupUser.DeleteFlag = DeleteFlag.Yes;
-            await this.groupUserRepository.save(groupUser);
-            return Problem.Ok(Consts.MSG_DELETE_SUCCESSFULLY(GroupUser.name, groupUser.Id));
+            groupUserTemplate.DeleteFlag = DeleteFlag.Yes;
+            await this.groupUserTemplateRepository.save(groupUserTemplate);
+            return Problem.Ok(Consts.MSG_DELETE_SUCCESSFULLY(GroupUserTemplate.name, groupUserTemplate.Id));
         } catch (error) {
             return error;
         }

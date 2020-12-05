@@ -86,7 +86,6 @@ export class FunctionsService {
             Logger.error(GetAction.GetFromDB, error);
             return Problem.InternalServerError();
         }
-
     }
     async create(req: Request, body: ReqFunctions): Promise<Functions | Problem> {
         // [1] validate data
@@ -95,7 +94,6 @@ export class FunctionsService {
             Logger.log(CreateAction.ValidateRequest);
             return Problem.BadRequest(validMessages);
         }
-
         // check application_id
         let application: Application;
         try {

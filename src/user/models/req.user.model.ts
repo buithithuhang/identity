@@ -26,7 +26,7 @@ export class ReqUser {
 
     @ApiProperty()
     gender: string;
-    
+
     @ApiProperty()
     avatar: string;
 
@@ -35,10 +35,10 @@ export class ReqUser {
 
     @ApiProperty()
     user_name: string;
-    
+
     @ApiProperty()
     password: string;
-        
+
     @ApiProperty()
     company_id: string;
 
@@ -70,11 +70,8 @@ export class ReqUser {
             messages.push({ field: BaseFields.Name, message: Consts.MSG_FIELD_REQUIRED(BaseFields.Name) });
         }
 
-        if (!user.company_id) {
+        if (!user.company_id && !user.group_user_id) {
             messages.push({ field: "company_id", message: Consts.MSG_FIELD_REQUIRED("company_id") });
-        }
-
-        if (!user.group_user_id) {
             messages.push({ field: "group_user_id", message: Consts.MSG_FIELD_REQUIRED("group_user_id") });
         }
         return messages;

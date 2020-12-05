@@ -8,7 +8,7 @@ import { SiteModule } from './site/site.module';
 import { SiteRegisterModule } from './site-register/site-register.module';
 import { UserModule } from './user/user.module';
 import { GroupUserModule } from './group-user/group-user.module';
-import { GroupUserRoleModule } from './group-user-role/group-user-role.module';
+import { GroupUserTemplateModule } from './group-user-template/group-user-template.module';
 import { FunctionsModule } from './functions/functions.module';
 
 
@@ -22,7 +22,7 @@ import { FunctionsModule } from './functions/functions.module';
     SiteRegisterModule,
     UserModule,
     GroupUserModule,
-    GroupUserRoleModule
+    GroupUserTemplateModule
   ],
   controllers: [AppController],
   providers: [AppService],
