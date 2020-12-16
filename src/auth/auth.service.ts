@@ -14,6 +14,8 @@ import { Application } from "src/application/entities/application.entity";
 import { EmailTemplate } from "src/email-template/entities/email-template.entity";
 import { GroupUserTemplate } from "src/group-user-template/entities/group-user-template.entity";
 import { RequestTarget as request } from "src/common";
+import { Crypto } from './crypt';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +32,9 @@ export class AuthService {
         @InjectRepository(Application)
         private applicationRepository: Repository<Application>,
 
+        @InjectRepository(Site)
+        private siteRepository: Repository<Site>,
+        
         @InjectRepository(EmailTemplate)
         private emailTemplateRepository: Repository<EmailTemplate>,
 
@@ -60,12 +65,32 @@ export class AuthService {
         } catch (ex) {
             return Problem.InternalServerError();
         }
+        let code = '';
+        // Tạo ngẫu nhiên 6 ký tự được cấp dưới dạng (0-9 a-z A-Z) 
+        try {
 
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const charactersLength = characters.length;
+            for (let i = 0; i < length; i++) {
+                code += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+        } catch (ex) {
+            return Problem.InternalServerError();
+        }
         // Nếu cả 3 giá trị trên không bị trùng khớp, tạo mới tài khoản cho người dùng\
-        let user;
+        let user: User;
+
+        // ma hoa password nhe
+        let passwordHash = Crypto.crypt(body.password);
         try {
             user = new User();
-            user.UserName = body.username;
+            user.Username = body.username;
+            user.Email = body.email;
+            user.Phone = body.phone;
+            user.Code = code;
+            user.Password = passwordHash;
+            // user.Company= body.company_name;
+            // user.Password= body.password;
             //... nho bo sung cac field dang ky giup anh email, phone...
             user = await this.userRepository.save(user);
 
@@ -101,7 +126,7 @@ export class AuthService {
             site.Application = application;
             site.Company = company;
             //...
-            site = await this.userRepository.save(site);
+            site = await this.siteRepository.save(site);
             req.body.site_id = site.Id;
         } catch (ex) {
             return Problem.InternalServerError();
@@ -137,17 +162,15 @@ export class AuthService {
         try {
             let groupUserDefault = userGroup.find(g => g.IsDefault === true)
             user.GroupUser = groupUserDefault;
+
+            // update user info
+            user.Company = company;
             await this.userRepository.save(user);
         } catch (error) {
             return Problem.InternalServerError();
         }
 
-        // Tạo khách sạn
-        // tạo floors
-        // tạo status...
-        let init = await request.post(req, { url: `${process.env.HKM_API}/init` });
-        console.log(init);
-        console.log("init hkm module successfully")
+
         // Chọn mẫu email và điền dữ liệu vào mẫu  
         // -> get email template
         let emailTemplate;
@@ -161,19 +184,7 @@ export class AuthService {
         }
 
 
-        // Tạo ngẫu nhiên 6 ký tự được cấp dưới dạng (0-9 a-z A-Z) 
-        try {
-            let result = '';
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            const charactersLength = characters.length;
-            for (let i = 0; i < length; i++) {
-                result += characters.charAt(Math.floor(Math.random() * charactersLength));
-            }
-            return result;
 
-        } catch (ex) {
-            return Problem.InternalServerError();
-        }
         // mapping data to email_template
 
 
@@ -182,8 +193,81 @@ export class AuthService {
 
     }
 
+    async verifyCode(req: Request, code: string) {
+        // get data user registed 
+        let user: User;
+        try {
+            user = await this.userRepository.findOne({
+                Code: code
+            })
+            // neeus ko tim duoc user da dang ky theo code
+            if (!user) {
+                return Problem.NotFound('User not found');
+            }
+        } catch (error) {
+            return Problem.InternalServerError();
+        }
+
+        // Tạo khách sạn
+        // tạo floors
+        // tạo status...
+        let init = await request.post(req, { url: `${process.env.HKM_API}/init` });
+        console.log(init);
+        console.log("init hkm module successfully")
+
+        // loign
+        return this.login(req, new ReqLogin(user.Username, Crypto.decrypt(user.Password)))
+    }
+
 
     async login(req: Request, body: ReqLogin) {
 
+        // vaidate
+        // [1] validate data
+        const validMessages = ReqLogin.runValidator(body);
+        if (validMessages?.length > 0) {
+            return Problem.BadRequest(validMessages);
+        }
+
+        // get user by username/email/phonenumber
+        let user: User;
+        try {
+            user = await this.userRepository.findOne({
+                relations: ['Company'],
+                where: [
+                    { UserName: body.username },
+                    { Phone: body.username },
+                    { Email: body.username },]
+            });
+            if (!user) {
+                return Problem.NotFound('User not found');
+            }
+        } catch (ex) {
+            return Problem.InternalServerError();
+        }
+
+        // check password
+        let passwordHash = Crypto.crypt(body.password);
+        if (passwordHash !== user.Password) {
+            return Problem.NotFound('Password is incorrect');
+        }
+        // get siteId from domain name
+        let site: Site;
+        try {
+            site = await this.siteRepository.findOne({
+                Domain: body.domain
+            })
+        } catch (error) {
+            
+        }
+        // generate access token
+        // su dung jwt 
+        let exp = Math.floor(Date.now() / 1000) + (60 * 60)
+        let access_token = jwt.sign({
+            exp,
+            data: user
+        }, 'secret');
+        
+        return { site_id: site.Id, access_token, exp }
     }
 }

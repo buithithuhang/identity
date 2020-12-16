@@ -4,19 +4,25 @@ import { HttpStatus, Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { Problem, Requester } from '../common';
 
 import { Request } from 'express';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthorizationMiddleware implements NestMiddleware {
     async use(req: Request, res: any, next: () => void) {
 
-        // if (!req.headers.authorization || !req.headers.site_id) {
-        //     throw Problem.HttpException(Problem.UnAuthorized(Consts.MSG_AUTH_FAILED));
-        // }
+        if (!req.headers.authorization) {
+            throw Problem.HttpException(Problem.UnAuthorized(Consts.MSG_AUTH_FAILED));
+        }
         req.body.site_id = req.headers.site_id;
         req.body.user = { role: 'superadmin' };
 
         // TODO if user role != superadmin => check req.headers.site_id
-
+        try {
+            var decoded = jwt.verify(req.headers.authorization, 'secret');
+        } catch (err) {
+            // err
+            throw Problem.HttpException(Problem.UnAuthorized(Consts.MSG_AUTH_FAILED));
+        }
 
         // const headers = { headers: { authorization: req.headers.authorization } };
         // const response: any = await Requester.post(`${process.env.AUTH_API}/site/verify`, { site_id: req.headers.site_id }, headers);

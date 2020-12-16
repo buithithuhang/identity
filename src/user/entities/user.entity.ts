@@ -31,10 +31,10 @@ export class User extends BaseSystemEntity {
     public Adress: string;
 
     @Column({ name: 'user_name', type: 'varchar', length: 100, nullable: true })
-    public UserName: string;
+    public Username: string;
 
     @Column({ name: 'password', type: 'varchar', length: 150, nullable: true })
-    public PassWord: string;
+    public Password: string;
 
     @Column({ name: 'company_id', type: 'char', length: 64, nullable: true })
     CompanyId: string;
@@ -56,4 +56,8 @@ export class User extends BaseSystemEntity {
     @TreeChildren()
     Children: User[];
 
+    @Column({ name: 'code', type: 'varchar', length: 6, nullable: true })
+    public Code: string;
+
+    
 }
