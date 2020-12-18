@@ -19,7 +19,7 @@ export class RequestTarget {
 
     static async post(req, target: ITarget) {
         try {
-            const headers = { headers: { authorization: req.headers.authorization } };
+            const headers = { headers: { authorization: req.headers.authorization , site_id: req.headers.site_id} };
             return await Requester.post(target.url, { body: req.body }, headers);
 
         }

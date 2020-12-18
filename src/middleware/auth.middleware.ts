@@ -14,11 +14,14 @@ export class AuthorizationMiddleware implements NestMiddleware {
             throw Problem.HttpException(Problem.UnAuthorized(Consts.MSG_AUTH_FAILED));
         }
         req.body.site_id = req.headers.site_id;
-        req.body.user = { role: 'superadmin' };
+        
 
         // TODO if user role != superadmin => check req.headers.site_id
         try {
-            // var decoded = jwt.verify(req.headers.authorization, 'secret');
+            var decoded = jwt.verify(req.headers.authorization.replace('Bearer ', ''), 'secret');
+            req.body.user = decoded.data;
+            //TODO will be check role 
+            req.body.user.role = 'superadmin';
         } catch (err) {
             // err
             throw Problem.HttpException(Problem.UnAuthorized(Consts.MSG_AUTH_FAILED));

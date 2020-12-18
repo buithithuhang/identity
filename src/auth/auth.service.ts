@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Problem } from "src/common";
+import { Mapper, Problem } from "src/common";
 import { Company } from "src/company/entities/company.entity";
 import { GroupUser } from "src/group-user/entities/group-user.entity";
 import { User } from "src/user/entities/user.entity";
@@ -18,6 +18,7 @@ import { Crypto } from './crypt';
 import * as jwt from 'jsonwebtoken';
 import { MailerService } from "@nestjs-modules/mailer";
 import { emailConfig } from "src/config/email_config";
+import { ResUser } from "src/user/models/res.user.model";
 
 interface MailData {
     to: string, subject: string, text: string, html: string
@@ -235,12 +236,14 @@ export class AuthService {
         }
         console.log(`${user.Company.Name.toLowerCase().replace('/\ /gi', '')}.${req.hostname}`);
         try {
+            let domain = `${user.Company.Name.toLowerCase().replace('/\ /gi', '')}.${req.hostname}`;
             //get site id
             let site = await this.siteRepository.findOne({
-                Domain: `${user.Company.Name.toLowerCase().replace('/\ /gi', '')}.${req.hostname}`
+                Domain: domain
             });
             req.headers.authorization = "Bear init";
             req.headers.site_id = site.Id;
+            req.body.auth_user = Mapper.map(ResUser, user);
             let init = await request.post(req, { url: `${process.env.HKM_API}/init` });
             console.log(init);
             console.log("init hkm module successfully")
@@ -269,9 +272,10 @@ export class AuthService {
             user = await this.userRepository.findOne({
                 relations: ['Company'],
                 where: [
-                    { UserName: body.username },
-                    { Phone: body.username },
-                    { Email: body.username },]
+                    { UserName: body.username, IsVerified: 1 },
+                    { Phone: body.username, IsVerified: 1 },
+                    { Email: body.username, IsVerified: 1 }
+                ]
             });
             if (!user) {
                 return Problem.NotFound('User not found');
@@ -285,11 +289,14 @@ export class AuthService {
         if (passwordHash !== user.Password) {
             return Problem.NotFound('Password is incorrect');
         }
+
+        let domain = `${user.Company.Name.toLowerCase().replace('/\ /gi', '')}.${req.hostname}`;
+
         // get siteId from domain name
         let site: Site;
         try {
             site = await this.siteRepository.findOne({
-                Domain: body.domain
+                Domain: domain
             })
         } catch (error) {
             return Problem.InternalServerError();
@@ -299,7 +306,7 @@ export class AuthService {
         let exp = Math.floor(Date.now() / 1000) + (60 * 60)
         let access_token = jwt.sign({
             exp,
-            data: user
+            data: Mapper.map(ResUser, user)
         }, 'secret');
 
         return { site_id: site.Id, access_token, exp }

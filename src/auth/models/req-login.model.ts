@@ -22,9 +22,9 @@ export class ReqLogin {
         // valid fields 
         const validator = new Validator();
         // Điều kiện: Mật khẩu phải bao gồm chữ in hoa chữ in thường, số
-        if (!validator.isAlphanumeric([(data.password, 'en-US')])) {
-            messages.push({ field: "Password", message: Consts.MSG_FIELD_INVALID("Password") })
-        }
+        // if (!validator.isAlphanumeric([(data.password, 'en-US')])) {
+        //     messages.push({ field: "Password", message: Consts.MSG_FIELD_INVALID("Password") })
+        // }
         return messages;
 
     }
