@@ -16,7 +16,12 @@ import { GroupUserTemplate } from "src/group-user-template/entities/group-user-t
 import { RequestTarget as request } from "src/common";
 import { Crypto } from './crypt';
 import * as jwt from 'jsonwebtoken';
+import { MailerService } from "@nestjs-modules/mailer";
+import { emailConfig } from "src/config/email_config";
 
+interface MailData {
+    to: string, subject: string, text: string, html: string
+}
 @Injectable()
 export class AuthService {
     constructor(
@@ -34,33 +39,34 @@ export class AuthService {
 
         @InjectRepository(Site)
         private siteRepository: Repository<Site>,
-        
+
         @InjectRepository(EmailTemplate)
         private emailTemplateRepository: Repository<EmailTemplate>,
 
         @InjectRepository(GroupUserTemplate)
         private groupUserTemplateRepository: Repository<GroupUserTemplate>,
 
-
+        private readonly mailerService: MailerService,
     ) {
-
 
     }
 
     async register(req: Request, body: ReqRegister): Promise<ResRegister | Problem> {
 
+        console.log("req.hostname" + req.hostname);
         // Kiểm tra nếu một trong 3 giá trị bị trùng khớp thì trả về lỗi 400	
         try {
             var users = await this.userRepository.find({
                 where: [
-                    { UserName: body.username },
+                    { Username: body.username },
                     { Phone: body.phone },
-                    { Email: body.email },]
+                    { Email: body.email },
+                ]
             });
             if (users.length > 0) {
                 // return error 400
                 //console.log('Validation failed: ', Error);
-                throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+                return Problem.BadRequest('User already exists');
             }
         } catch (ex) {
             return Problem.InternalServerError();
@@ -71,7 +77,7 @@ export class AuthService {
 
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             const charactersLength = characters.length;
-            for (let i = 0; i < length; i++) {
+            for (let i = 0; i < 6; i++) {
                 code += characters.charAt(Math.floor(Math.random() * charactersLength));
             }
         } catch (ex) {
@@ -125,6 +131,7 @@ export class AuthService {
             site = new Site();
             site.Application = application;
             site.Company = company;
+            site.Domain = `${company.Name.toLowerCase().replace('/\ /gi', '')}.${req.hostname}`;
             //...
             site = await this.siteRepository.save(site);
             req.body.site_id = site.Id;
@@ -187,10 +194,23 @@ export class AuthService {
 
         // mapping data to email_template
 
+        try {
+            // send email
+            const mailer = { to: user.Email, subject: 'register', text: 'verify code: ' + user.Code } as MailData;
+            await this
+                .mailerService
+                .sendMail({
+                    to: mailer.to, // list of receivers
+                    from: emailConfig.email, // sender address
+                    subject: mailer.subject, // Subject line
+                    text: mailer.text, // plaintext body
+                    html: mailer.html, // HTML body content
+                });
+        } catch (error) {
+            return Problem.InternalServerError();
+        }
 
-        // send email
-
-
+        return Problem.Ok("register successfully");
     }
 
     async verifyCode(req: Request, code: string) {
@@ -198,22 +218,36 @@ export class AuthService {
         let user: User;
         try {
             user = await this.userRepository.findOne({
-                Code: code
+                relations: ['Company'],
+                where: {
+                    Code: code
+                }
             })
             // neeus ko tim duoc user da dang ky theo code
             if (!user) {
                 return Problem.NotFound('User not found');
             }
+
+            user.IsVerified = 1;
+            await this.userRepository.save(user);
         } catch (error) {
             return Problem.InternalServerError();
         }
+        console.log(`${user.Company.Name.toLowerCase().replace('/\ /gi', '')}.${req.hostname}`);
+        try {
+            //get site id
+            let site = await this.siteRepository.findOne({
+                Domain: `${user.Company.Name.toLowerCase().replace('/\ /gi', '')}.${req.hostname}`
+            });
+            req.headers.authorization = "Bear init";
+            req.headers.site_id = site.Id;
+            let init = await request.post(req, { url: `${process.env.HKM_API}/init` });
+            console.log(init);
+            console.log("init hkm module successfully")
 
-        // Tạo khách sạn
-        // tạo floors
-        // tạo status...
-        let init = await request.post(req, { url: `${process.env.HKM_API}/init` });
-        console.log(init);
-        console.log("init hkm module successfully")
+        } catch (error) {
+
+        }
 
         // loign
         return this.login(req, new ReqLogin(user.Username, Crypto.decrypt(user.Password)))
@@ -258,7 +292,7 @@ export class AuthService {
                 Domain: body.domain
             })
         } catch (error) {
-            
+            return Problem.InternalServerError();
         }
         // generate access token
         // su dung jwt 
@@ -267,7 +301,7 @@ export class AuthService {
             exp,
             data: user
         }, 'secret');
-        
+
         return { site_id: site.Id, access_token, exp }
     }
 }

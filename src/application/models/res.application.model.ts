@@ -7,12 +7,14 @@ export class ResApplication {
     id: string;
     name: string;
     description: string;
+    hostname: string;
     functionses: ResFunctions[];
     sites: ResSite[];
 
     constructor(json?: Application) {
         this.id = json?.Id;
         this.name = json?.Name;
+        this.hostname = json?.HostName;
         this.description = json?.Description;
         this.functionses = json?.Functionses ? Mapper.map(ResFunctions, json.Functionses) : null;
         this.sites = json?.Sites ? Mapper.map(ResSite, json.Sites) : null;

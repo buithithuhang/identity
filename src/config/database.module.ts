@@ -39,6 +39,7 @@ async function DatabaseOrmModule(): Promise<DynamicModule> {
         },
         synchronize: true,
         entities: [__dirname + '../../**/*.entity{.ts,.js}'],
+        logger: "debug",
     });
 }
 

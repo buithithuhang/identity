@@ -117,8 +117,8 @@ export class UserService {
             user.Gender = body.gender;
             user.Avatar = body.avatar;
             user.Position = body.position;
-            user.UserName = body.user_name;
-            user.PassWord = body.password;
+            user.Username = body.user_name;
+            user.Password = body.password;
             user.Company = company;
             user.GroupUser = groupUser;
             user.setBaseDataInfo(req);

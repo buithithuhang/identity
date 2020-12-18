@@ -28,8 +28,8 @@ export class ResUser {
         this.adress = json?.Adress;
         this.avatar = json?.Avatar;
         this.position = json?.Position;
-        this.password = json?.PassWord;
-        this.user_name = json?.UserName;
+        this.password = json?.Password;
+        this.user_name = json?.Username;
         this.company_id = json?.CompanyId;       
         this.group_user_id = json?.GroupUserID;
 

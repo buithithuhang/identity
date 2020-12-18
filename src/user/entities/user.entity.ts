@@ -60,4 +60,7 @@ export class User extends BaseSystemEntity {
     public Code: string;
 
     
+    @Column({ name: 'is_verified', type: 'tinyint', nullable: true, default: 0 })
+    public IsVerified: number;
+
 }

@@ -78,6 +78,7 @@ export class ApplicationService {
             const application = new Application();
             application.Name = body.name;
             application.Description = body.description;
+            application.HostName = body.hostname;
             application.setBaseDataInfo(req);
 
             await this.applicationRepository.save(application);
@@ -111,6 +112,7 @@ export class ApplicationService {
         try {
             application.Name = body.name || application.Name;
             application.Description = body.description || application.Description;
+            application.HostName = body.hostname|| application.HostName;
             application.setBaseDataInfo(req);
 
             await this.applicationRepository.save(application);

@@ -18,7 +18,7 @@ export class AuthorizationMiddleware implements NestMiddleware {
 
         // TODO if user role != superadmin => check req.headers.site_id
         try {
-            var decoded = jwt.verify(req.headers.authorization, 'secret');
+            // var decoded = jwt.verify(req.headers.authorization, 'secret');
         } catch (err) {
             // err
             throw Problem.HttpException(Problem.UnAuthorized(Consts.MSG_AUTH_FAILED));
