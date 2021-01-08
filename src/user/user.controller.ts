@@ -17,7 +17,7 @@ import { AuthorizationMiddleware } from 'src/middleware/auth.middleware';
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @Get()
+  @Get('all')
   async all(@Req() req: Request, @Query() query: Pagination) {
     const result = await this.userService.findAll(req, new Pagination(query));
     return (result instanceof Problem)
@@ -25,7 +25,7 @@ export class UserController {
       : result;
   }
 
-  @Get(':id')
+  @Get('get/:id')
   async get(@Req() req: Request, @Param('id') id: string) {
     const result = await this.userService.get(req, id);
     return (result instanceof Problem)
@@ -33,7 +33,7 @@ export class UserController {
       : result;
   }
 
-  @Post()
+  @Post('create')
   async create(@Req() req: Request, @Body() body: ReqUser): Promise<User | Problem> {
     const result = this.userService.create(req, body);
     return (result instanceof Problem)
@@ -41,7 +41,7 @@ export class UserController {
       : result;
   }
 
-  @Put(':id')
+  @Put('update/:id')
   async update(@Req() req: Request, @Param('id') id: string, @Body() body: ReqUser): Promise<User | Problem> {
     const result = this.userService.update(req, id, body);
     return (result instanceof Problem)
@@ -49,7 +49,7 @@ export class UserController {
       : result;
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   async delete(@Req() req: Request, @Param('id') id: string): Promise<any> {
     const result = this.userService.delete(req, id);
     return (result instanceof Problem)

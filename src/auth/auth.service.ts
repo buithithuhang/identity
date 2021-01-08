@@ -285,6 +285,7 @@ export class AuthService {
         }
 
         // check password
+        // console.log(Crypto.decrypt(user.Password))
         let passwordHash = Crypto.crypt(body.password);
         if (passwordHash !== user.Password) {
             return Problem.NotFound('Password is incorrect');

@@ -105,7 +105,18 @@ export class UserService {
             Logger.log(CreateAction.ValidateRequest);
             return Problem.InternalServerError();
         }
+        let code = '';
+        // Tạo ngẫu nhiên 6 ký tự được cấp dưới dạng (0-9 a-z A-Z) 
+        try {
 
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const charactersLength = characters.length;
+            for (let i = 0; i < 6; i++) {
+                code += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+        } catch (ex) {
+            return Problem.InternalServerError();
+        }
         try {
             const user = new User();
             user.Name = body.name;
@@ -121,9 +132,15 @@ export class UserService {
             user.Password = body.password;
             user.Company = company;
             user.GroupUser = groupUser;
+            user.IsVerified = 0;
+            user.Code = code;
             user.setBaseDataInfo(req);
 
             await this.userRepository.save(user);
+
+            // send email to verify code
+            
+
             return Mapper.map(ResUser, user);
         } catch (error) {
             Logger.error(CreateAction.CheckFromDB, error);
