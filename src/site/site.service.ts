@@ -145,7 +145,7 @@ export class SiteService {
 
         // check application id
         let application: Application;
-        if (body.application_id && site.application_id !== body.application_id) {
+        if (body.application_id && site.ApplicationId !== body.application_id) {
             let application: Application;
             try {
                 application = await this.applicationRepository.findOne({ Id: body.application_id, DeleteFlag: DeleteFlag.None });
@@ -160,7 +160,7 @@ export class SiteService {
 
         // check company id
         let company: Company;
-        if (body.company_id && site.company_id !== body.company_id) {
+        if (body.company_id && site.CompanyId !== body.company_id) {
             let company: Company;
             try {
                 company = await this.companyRepository.findOne({ Id: body.company_id, DeleteFlag: DeleteFlag.None });
@@ -179,8 +179,8 @@ export class SiteService {
             site.Name = body.name || site.Name;
             site.Description = body.description || site.Description;
             site.Domain = body.domain || site.Domain;
-            site.application_id = application?.Id || site.application_id;
-            site.company_id = company?.Id || site.company_id;
+            site.ApplicationId = application?.Id || site.ApplicationId;
+            site.CompanyId = company?.Id || site.CompanyId;
             site.setBaseDataInfo(req);
 
             await this.siteRepository.save(site);

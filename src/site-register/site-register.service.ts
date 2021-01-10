@@ -129,7 +129,7 @@ export class SiteRegisterService {
         }
 
         let site: Site;
-        if (body.site_id && siteRegister.site_id !== body.site_id) {
+        if (body.site_id && siteRegister.SiteId !== body.site_id) {
             // check site id
             let site: Site;
             try {
@@ -149,7 +149,7 @@ export class SiteRegisterService {
             siteRegister.RegisterDate = body.register_date || siteRegister.RegisterDate;
             siteRegister.RegisterPlan = body.register_plan || siteRegister.RegisterPlan;
             siteRegister.Expired = body.expired || siteRegister.Expired;
-            siteRegister.site_id = site?.Id || siteRegister.site_id;
+            siteRegister.SiteId = site?.Id || siteRegister.SiteId;
             siteRegister.setBaseDataInfo(req);
 
             await this.siteRegisterRepository.save(siteRegister);

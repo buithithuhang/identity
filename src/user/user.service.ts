@@ -195,7 +195,7 @@ export class UserService {
 
         // check company id
         let company: Company;
-        if (body.company_id && user.company_id !== body.company_id) {
+        if (body.company_id && user.CompanyId !== body.company_id) {
             let company: Company;
             try {
                 company = await this.companyRepository.findOne({ Id: body.company_id, DeleteFlag: DeleteFlag.None });
@@ -210,7 +210,7 @@ export class UserService {
 
 
         let groupUser: GroupUser;
-        if (body.group_user_id && user.group_user_id !== body.group_user_id) {
+        if (body.group_user_id && user.GroupUserID !== body.group_user_id) {
             // check groupUser id
             let groupUser: GroupUser;
             try {
@@ -236,8 +236,8 @@ export class UserService {
             user.Avatar = body.avatar || user.Avatar;
             user.UserName = body.user_name || user.UserName;
             user.Gender = body.gender || user.Gender;
-            user.company_id = company?.Id || user.company_id;
-            user.group_user_id = groupUser?.Id || user.group_user_id;
+            user.CompanyId = company?.Id || user.CompanyId;
+            user.GroupUserID = groupUser?.Id || user.GroupUserID;
             user.setBaseDataInfo(req);
 
             await this.userRepository.save(user);

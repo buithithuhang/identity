@@ -147,7 +147,7 @@ export class FunctionsService {
 
         // check application id
         let application: Application;
-        if (body.application_id && functions.application_id !== body.application_id) {
+        if (body.application_id && functions.ApplicationId !== body.application_id) {
             let application: Application;
             try {
                 application = await this.applicationRepository.findOne({ Id: body.application_id, DeleteFlag: DeleteFlag.None });

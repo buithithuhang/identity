@@ -57,7 +57,6 @@ export class ReqUser {
         this.position = json?.Position || '';
         this.user_name = json?.Username || '';
         this.password = json?.Password || '';
-
         this.company_id = json?.CompanyId || '';
         this.group_user_id = json?.GroupUserID || '';
     }
