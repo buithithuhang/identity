@@ -25,6 +25,15 @@ export class UserController {
       : result;
   }
 
+  @Post('ids')
+  async ids(@Req() req: Request, @Query() query: Pagination) {
+    console.log(req.body)
+    const result = await this.userService.ids(req, new Pagination(query));
+    return (result instanceof Problem)
+      ? Problem.HttpException(result)
+      : result;
+  }
+
   @Get('get/:id')
   async get(@Req() req: Request, @Param('id') id: string) {
     const result = await this.userService.get(req, id);

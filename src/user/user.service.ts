@@ -1,7 +1,7 @@
 import { Injectable, Logger, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, In } from 'typeorm';
 import { DeleteFlag } from 'src/common/enums';
 import { Pagination } from 'src/base-model/paging.model';
 import { ResUser } from './../user/models/res.user.model';
@@ -15,6 +15,7 @@ import { BaseFields } from 'src/entities/base-system-fields';
 import { Request } from 'express';
 import { Company } from 'src/company/entities/company.entity';
 import { GroupUser } from 'src/group-user/entities/group-user.entity';
+import { INSPECT_MAX_BYTES } from 'buffer';
 @Injectable()
 export class UserService {
     constructor(
@@ -58,6 +59,30 @@ export class UserService {
             Logger.error(GetAllAction.GetFromDB, error);
             return Problem.InternalServerError();
         }
+    }
+
+    // Get all data
+    async ids(req: Request, paging?: Pagination) {
+        try {
+            console.log(req.body.ids);
+            const rows = await this.userRepository.find({
+                where: {
+                    DeleteFlag: DeleteFlag.None,
+                    Id: In(req.body.ids)
+                },
+                order: {
+                    Name: 'ASC',
+                },
+            });
+            console.log(rows)
+            return rows && Mapper.map(ResUser, rows);
+
+        } catch (error) {
+            Logger.error(GetAllAction.GetFromDB, error);
+            return Problem.InternalServerError();
+        }
+
+
     }
 
     async get(req: Request, id: string) {
@@ -139,7 +164,7 @@ export class UserService {
             await this.userRepository.save(user);
 
             // send email to verify code
-            
+
 
             return Mapper.map(ResUser, user);
         } catch (error) {
