@@ -1,3 +1,6 @@
+import { Mapper } from 'src/common';
+import { ResCompany } from 'src/company/models/res.company.model';
+import { ResGroupUser } from 'src/group-user/models/res.group-user.model';
 import { User } from '../entities/user.entity';
 
 export class ResUser {
@@ -13,8 +16,8 @@ export class ResUser {
     position: string;
     password: string;
     user_name: string;
-    company_id: string;
-    group_user_id: string;
+    company: ResCompany;
+    group_user: ResGroupUser;
 
     constructor(json?: User) {
         this.id = json?.Id;
@@ -30,8 +33,8 @@ export class ResUser {
         this.position = json?.Position;
         this.password = json?.Password;
         this.user_name = json?.Username;
-        this.company_id = json?.CompanyId;       
-        this.group_user_id = json?.GroupUserID;
+        this.company = json?.CompanyId? Mapper.map(ResCompany, json?.Company) : null;      
+        this.group_user = json?.GroupUserID? Mapper.map(ResGroupUser, json?.GroupUser) : null;
 
 
     }

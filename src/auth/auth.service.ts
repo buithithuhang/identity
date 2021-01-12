@@ -234,9 +234,9 @@ export class AuthService {
         } catch (error) {
             return Problem.InternalServerError();
         }
-        console.log(`${user.Company.Name.toLowerCase().replace('/\ /gi', '')}.${req.hostname}`);
+        console.log(`${user?.Company?.Name.toLowerCase().replace('/\ /gi', '')}.${req.hostname}`);
         try {
-            let domain = `${user.Company.Name.toLowerCase().replace('/\ /gi', '')}.${req.hostname}`;
+            let domain = `${user?.Company?.Name.toLowerCase().replace('/\ /gi', '')}.${req.hostname}`;
             //get site id
             let site = await this.siteRepository.findOne({
                 Domain: domain
@@ -292,7 +292,7 @@ export class AuthService {
         }
 
         let domain = `${user.Company.Name.toLowerCase().replace('/\ /gi', '')}.${req.hostname}`;
-
+        console.log("domain", domain);
         // get siteId from domain name
         let site: Site;
         try {

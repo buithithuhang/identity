@@ -106,7 +106,7 @@ export class UserService {
             Logger.log(CreateAction.ValidateRequest);
             return Problem.BadRequest(validMessages);
         }
-
+        // cai nay sua lai, dau tien get thong tin của nguoi dang nhap, sau do clone thong tin chung : company id....
         // check company_id
         let company: Company;
         try {
