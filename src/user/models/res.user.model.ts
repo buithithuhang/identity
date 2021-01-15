@@ -14,7 +14,6 @@ export class ResUser {
     adress: string;
     avatar: string;
     position: string;
-    password: string;
     user_name: string;
     company: ResCompany;
     group_user: ResGroupUser;
@@ -31,7 +30,6 @@ export class ResUser {
         this.adress = json?.Adress;
         this.avatar = json?.Avatar;
         this.position = json?.Position;
-        this.password = json?.Password;
         this.user_name = json?.Username;
         this.company = json?.CompanyId? Mapper.map(ResCompany, json?.Company) : null;      
         this.group_user = json?.GroupUserID? Mapper.map(ResGroupUser, json?.GroupUser) : null;

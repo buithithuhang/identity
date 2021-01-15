@@ -271,11 +271,11 @@ export class AuthService {
         try {
             user = await this.userRepository.findOne({
                 relations: ['Company'],
-                where: [
-                    { UserName: body.username, IsVerified: 1 },
-                    { Phone: body.username, IsVerified: 1 },
+                where:
+                    // { UserName: body.username, IsVerified: 1 },
+                    // { Phone: body.username, IsVerified: 1 },
                     { Email: body.username, IsVerified: 1 }
-                ]
+
             });
             if (!user) {
                 return Problem.NotFound('User not found');
@@ -285,8 +285,8 @@ export class AuthService {
         }
 
         // check password
-        // console.log(Crypto.decrypt(user.Password))
         let passwordHash = Crypto.crypt(body.password);
+        //console.log(Crypto.decrypt(user.Password))
         if (passwordHash !== user.Password) {
             return Problem.NotFound('Password is incorrect');
         }
@@ -310,6 +310,6 @@ export class AuthService {
             data: Mapper.map(ResUser, user)
         }, 'secret');
 
-        return { site_id: site.Id, access_token, exp }
+        return { site_id: site.Id, access_token, exp, position: user.Position }
     }
 }
