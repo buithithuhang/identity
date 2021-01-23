@@ -39,8 +39,8 @@ export class GroupUserTemplateService {
                 order: {
                     Name: 'ASC',
                 },
-                skip: paging.page * paging.pageSize,
-                take: paging.pageSize,
+                //skip: paging.page * paging.pageSize,
+                //take: paging.pageSize,
             });
 
             return {

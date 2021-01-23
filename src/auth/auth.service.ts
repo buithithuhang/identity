@@ -98,7 +98,6 @@ export class AuthService {
             user.Password = passwordHash;
             // user.Company= body.company_name;
             // user.Password= body.password;
-            //... nho bo sung cac field dang ky giup anh email, phone...
             user = await this.userRepository.save(user);
 
         } catch (ex) {
